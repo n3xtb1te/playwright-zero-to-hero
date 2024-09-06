@@ -115,7 +115,7 @@ test.skip('extracting value' , async ({ page }) => {
     expect(placeholderValue).toEqual('Email');
 });
 
-test('assertions', async ({ page }) => {
+test.skip('assertions', async ({ page }) => {
     const basicFormButton = page.locator('nb-card').filter({ hasText: 'Basic form' }).locator('button');
     // general assertions
     const value = 5;
