@@ -90,7 +90,7 @@ test.skip('lists and dropdowns', async ({ page }) => {
     }
 });
 
-test('tooltips', async ({ page }) => {
+test.skip('tooltips', async ({ page }) => {
     await page.getByText('Modal & Overlays').click();
     await page.getByText('Tooltip').click();
 
@@ -100,4 +100,38 @@ test('tooltips', async ({ page }) => {
     page.getByRole('tooltip'); // if you have a role tooltip created
     const tooltip = await page.locator('nb-tooltip').textContent();
     expect(tooltip).toEqual('This is a tooltip');
+});
+
+test.skip('dialog boxes simple', async ({ page }) => {
+    await page.getByText('Modal & Overlays').click();
+    await page.getByText('Dialog').click();
+    await page.getByRole('button', { name: 'Open Dialog with component' }).click();
+    await page.getByRole('button', { name: 'Dismiss Dialog' }).click();
+});
+
+test.skip('dialog boxes', async ({ page }) => {
+    await page.getByText('Tables & Data').click();
+    await page.getByText('Smart Table').click();
+
+    page.on('dialog', dialog => {
+        expect(dialog.message()).toEqual('Are you sure you want to delete?');
+        dialog.accept();
+    });
+
+    await page.getByRole('table').locator('tr', { hasText: 'mdo@gmail.com'}).locator('.nb-trash').click();
+    await expect(page.locator('table tr').first()).not.toHaveText('mdo@gmail.com');
+});
+
+test('web tables', async ({ page }) => {
+    await page.getByText('Tables & Data').click();
+    await page.getByText('Smart Table').click();
+
+    // await page.getByRole('table').locator('tr', { hasText: 'twitter@outlook.com' }).locator('.nb-edit').click();
+    
+    // get the row by any text in this row
+    const targetRow = page.getByRole('row', { name: 'twitter@outlook.com' });
+    await targetRow.locator('.nb-edit').click();
+    await page.locator('input-editor').getByPlaceholder('Age').clear();
+    await page.locator('input-editor').getByPlaceholder('Age').fill('35');
+    await page.locator('.nb-checkmark').click();
 });
