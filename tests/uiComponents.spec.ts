@@ -180,3 +180,29 @@ test.skip('date picker part 1', async ({ page }) => {
     await page.locator('[class="day-cell ng-star-inserted"]').getByText('14', { exact: true }).click();
     await expect(calendarInputField).toHaveValue('Sep 14, 2024');
 });
+
+test.skip('date picker part 2', async ({ page }) => {
+    await page.getByText('Forms').click();
+    await page.getByText('Datepicker').click();
+
+    const calendarInputField = page.getByPlaceholder('Form Picker');
+    await calendarInputField.click();
+
+    let date = new Date();
+    date.setDate(date.getDate() + 14);
+    const expectedDate = date.getDate().toString();
+    const expectedMonthShort = date.toLocaleString('En-US', { month: 'short' });
+    const expectedMonthLong = date.toLocaleString('En-US', { month: 'long' });
+    const expectedYear = date.getFullYear();
+    const dateToAssert = `${expectedMonthShort} ${expectedDate}, ${expectedYear}`;
+
+    let calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent();
+    const expectedMonthAndYear = ` ${expectedMonthLong} ${expectedYear} `;
+    while (!calendarMonthAndYear.includes(expectedMonthAndYear)) {
+        await page.locator('nb-calendar-pageable-navigation [data-name="chevron-right"]').click();
+        calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent();
+    }
+
+    await page.locator('[class="day-cell ng-star-inserted"]').getByText(expectedDate, { exact: true }).click();
+    await expect(calendarInputField).toHaveValue(dateToAssert);
+});
