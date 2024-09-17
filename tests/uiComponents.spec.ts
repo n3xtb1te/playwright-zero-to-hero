@@ -169,3 +169,14 @@ test.skip('web tables part 2', async ({ page }) => {
         }
     }
 });
+
+test.skip('date picker part 1', async ({ page }) => {
+    await page.getByText('Forms').click();
+    await page.getByText('Datepicker').click();
+
+    const calendarInputField = page.getByPlaceholder('Form Picker');
+    await calendarInputField.click();
+
+    await page.locator('[class="day-cell ng-star-inserted"]').getByText('14', { exact: true }).click();
+    await expect(calendarInputField).toHaveValue('Sep 14, 2024');
+});
